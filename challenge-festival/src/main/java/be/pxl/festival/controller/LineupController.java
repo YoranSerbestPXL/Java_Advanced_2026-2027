@@ -18,7 +18,10 @@ public class LineupController {
     }
 
     @GetMapping
-    public List<Act> findAll() {
+    public List<Act> findAll(@RequestParam(required = false) FestivalDay day) {
+        if (day != null) {
+            return lineupService.findByDay(day);
+        }
         return lineupService.findAll();
     }
 
@@ -33,12 +36,13 @@ public class LineupController {
     }
 
     @PostMapping
-    public Act createAct(@RequestBody Act act){
-        return lineupService.createAct(act);
+    public void createAct(@RequestBody Act act){
+        lineupService.createAct(act);
     }
 
     @PutMapping ("{id}")
     public void changeAct(@PathVariable long id, @RequestBody Act act){lineupService.changeAct(id,act);}
 
     @DeleteMapping ("{id}")
+    public void deleteAct(@PathVariable long id){lineupService.deleteAct(id);}
 }

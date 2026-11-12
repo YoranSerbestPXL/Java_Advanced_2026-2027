@@ -50,4 +50,33 @@ public class LineupService {
     public List<Act> findAll() {
         return new ArrayList<>(acts.values());
     }
+
+    public List<Act> findByDay(FestivalDay day) {
+        return acts.values().stream()
+                .filter(act -> act.getDay() == day)
+                .toList();
+    }
+    public Act getById(long id){
+        return acts.get(id);
+    }
+    public void createAct(Act act){
+        add(act);
+
+    }
+    public void changeAct(long id, Act act){
+        Act change = acts.get(id);
+        change.setName(act.getName());
+        change.setGenre(act.getGenre());
+        change.setStage(act.getStage());
+        change.setDay(act.getDay());
+        change.setStartTime(act.getStartTime());
+        change.setDurationMinutes(act.getDurationMinutes());
+        change.setFee(act.getFee());
+        change.setHeadliner(act.isHeadliner());
+        add(change);
+    }
+    public void deleteAct(long id){
+        acts.remove(id);
+    }
+
 }
