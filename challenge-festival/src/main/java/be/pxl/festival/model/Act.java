@@ -1,5 +1,7 @@
 package be.pxl.festival.model;
 
+import org.jspecify.annotations.NonNull;
+
 import java.time.LocalTime;
 
 /**
@@ -8,12 +10,20 @@ import java.time.LocalTime;
 public class Act {
 
     private Long id;
+    @NotBlank
     private String name;
+    @NonNull
     private Genre genre;
+    @NonNull
     private Stage stage;
+    @NonNull
     private FestivalDay day;
+    @NonNull
     private LocalTime startTime;
+    @Min(value = 15, message = "Duur moet minstens 15 minuten zijn")
+    @Max(value = 180, message = "Duur mag maximaal 180 minuten zijn")
     private int durationMinutes;
+    @Min(value = 0, message = "Fee mag niet negatief zijn")
     private double fee;          // gage in euro
     private boolean headliner;
 

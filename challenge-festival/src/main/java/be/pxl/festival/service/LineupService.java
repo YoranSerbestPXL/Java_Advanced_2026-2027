@@ -1,4 +1,7 @@
 package be.pxl.festival.service;
+import be.pxl.festival.exception.ActNotFoundException;
+import be.pxl.festival.exception.HeadlinerConflictException;
+
 
 import be.pxl.festival.model.Act;
 import be.pxl.festival.model.FestivalDay;
@@ -56,27 +59,52 @@ public class LineupService {
                 .filter(act -> act.getDay() == day)
                 .toList();
     }
-    public Act getById(long id){
-        return acts.get(id);
-    }
-    public void createAct(Act act){
-        add(act);
+    public Act getById(long id) {
+        Act act = acts.get(id);
 
+        if (act == null) {
+            throw new ActNotFoundException(id);
+        }
+
+        return act;
     }
-    public void changeAct(long id, Act act){
-        Act change = acts.get(id);
-        change.setName(act.getName());
-        change.setGenre(act.getGenre());
-        change.setStage(act.getStage());
-        change.setDay(act.getDay());
-        change.setStartTime(act.getStartTime());
-        change.setDurationMinutes(act.getDurationMinutes());
-        change.setFee(act.getFee());
-        change.setHeadliner(act.isHeadliner());
-        add(change);
+    public void createAct(Act act) {
+        checkHeadliner(act, -1);
+        add(act);
     }
-    public void deleteAct(long id){
+public void changeAct(long id, Act act) {
+    Act change = getById(id);
+
+    checkHeadliner(act, id);
+
+    change.setName(act.getName());
+    change.setGenre(act.getGenre());
+    change.setStage(act.getStage());
+    change.setDay(act.getDay());
+    change.setStartTime(act.getStartTime());
+    change.setDurationMinutes(act.getDurationMinutes());
+    change.setFee(act.getFee());
+    change.setHeadliner(act.isHeadliner());
+}
+    public void deleteAct(long id) {
+        getById(id);
         acts.remove(id);
     }
+
+private void checkHeadliner(Act act, long id) {
+    if (!act.isHeadliner()) {
+        return;
+    }
+
+    for (Act existing : acts.values()) {
+        if (existing.getId() != id
+                && existing.isHeadliner()
+                && existing.getDay() == act.getDay()
+                && existing.getStage() == act.getStage()) {
+
+            throw new HeadlinerConflictException();
+        }
+    }
+}
 
 }
